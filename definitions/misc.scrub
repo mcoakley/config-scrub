@@ -1,0 +1,7 @@
+# XML file data
+
+# XML community structure, redacting the community string
+^( *<data access.+community=\")(\S+)(\".+/>)
+
+# XML trap structure, redacting the community string
+^( *<data community=\")(\S+)(\".+type=\"trap\".+/>)
