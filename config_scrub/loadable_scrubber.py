@@ -3,6 +3,7 @@ import re
 from .scrubber import DEFAULT_REPLACER, Scrubber, ScrubberMatcher
 
 REPLACEMENT_IDENTIFIER = "replacement:"
+REPLACEMENT_IDENTIFIER_LEN = len(REPLACEMENT_IDENTIFIER)
 
 # We use the raw_map to convert interpreted RegEx positional markers back
 # e.g. when we read a string from a file the raw string r'\1{REDACTED}\3'
@@ -43,9 +44,8 @@ class LoadableScrubber(Scrubber):
 
                 # We have a current pattern so check if this line is a
                 # specific replacement or we simply have a new pattern
-                replacement_identifier_len = len(REPLACEMENT_IDENTIFIER)
                 if (
-                    line[:replacement_identifier_len]
+                    line[:REPLACEMENT_IDENTIFIER_LEN]
                     != REPLACEMENT_IDENTIFIER
                 ):
                     matchers.append(
@@ -53,7 +53,7 @@ class LoadableScrubber(Scrubber):
                     )
                     current_pattern = re.compile(line)
                 else:
-                    replace_line = line[replacement_identifier_len:].lstrip(
+                    replace_line = line[REPLACEMENT_IDENTIFIER_LEN:].lstrip(
                         " "
                     )
                     raw_line = r"".join(
