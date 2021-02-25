@@ -18,19 +18,28 @@ class ScrubberException(Exception):
 
 
 class Scrubber(object):
-    def __init__(self, matchers):
+    def __init__(self, matchers=None):
+        self.matchers = []
+        self.add_matchers(matchers)
+
+    def add_matchers(self, matchers):
+        # We simply ignore an empty matchers
+        if matchers is None:
+            return
+
         if not isinstance(matchers, list):
             raise ScrubberException("matchers must be a list")
 
-        if len(matchers) == 0:
-            raise ScrubberException("No matchers present, no work to do")
+        valid_matchers = []
+        for matcher in matchers:
+            if isinstance(matcher, ScrubberMatcher):
+                valid_matchers.append(matcher)
 
-        self.matchers = matchers
+        self.matchers.extend(valid_matchers)
 
     def scrub_line(self, line):
         new_line = line
         for matcher in self.matchers:
-            if isinstance(matcher, ScrubberMatcher):
-                new_line = matcher.scrub(new_line)
+            new_line = matcher.scrub(new_line)
 
         return new_line
